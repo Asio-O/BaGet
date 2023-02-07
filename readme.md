@@ -3,6 +3,7 @@
 ![Build status] [![Discord][Discord image]][Discord link] [![Twitter][Twitter image]][Twitter link]
 
 A lightweight [NuGet] and [symbol] server.
+轻量级NuGet与符号服务。
 
 <p align="center">
   <img width="100%" src="https://user-images.githubusercontent.com/737941/50140219-d8409700-0258-11e9-94c9-dad24d2b48bb.png">
