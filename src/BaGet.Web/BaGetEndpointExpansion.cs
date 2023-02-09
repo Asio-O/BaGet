@@ -1,129 +1,134 @@
-using BaGet.Web;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Constraints;
+using Microsoft.AspNetCore.Routing;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace BaGet
+namespace BaGet.Web
 {
-    [Obsolete]
-    public class BaGetEndpointBuilder
+    public static class BaGetEndpointExpansion
     {
-        public void MapEndpoints(IEndpointRouteBuilder endpoints)
+        public static WebApplication MapBaGetEndpoint(this WebApplication app)
         {
-            endpoints.MapRazorPages();
+            app.MapRazorPages();
 
-            MapServiceIndexRoutes(endpoints);
-            MapPackagePublishRoutes(endpoints);
-            MapSymbolRoutes(endpoints);
-            MapSearchRoutes(endpoints);
-            MapPackageMetadataRoutes(endpoints);
-            MapPackageContentRoutes(endpoints);
+            MapServiceIndexRoutes(app);
+            MapPackagePublishRoutes(app);
+            MapSymbolRoutes(app);
+            MapSearchRoutes(app);
+            MapPackageMetadataRoutes(app);
+            MapPackageContentRoutes(app);
+
+            return app;
         }
 
-        public void MapServiceIndexRoutes(IEndpointRouteBuilder endpoints)
+        public static void MapServiceIndexRoutes(WebApplication app)
         {
-            endpoints.MapControllerRoute(
+            app.MapControllerRoute(
                 name: Routes.IndexRouteName,
                 pattern: "v3/index.json",
                 defaults: new { controller = "ServiceIndex", action = "Get" });
         }
 
-        public void MapPackagePublishRoutes(IEndpointRouteBuilder endpoints)
+        public static void MapPackagePublishRoutes(WebApplication app)
         {
-            endpoints.MapControllerRoute(
+            app.MapControllerRoute(
                 name: Routes.UploadPackageRouteName,
                 pattern: "api/v2/package",
                 defaults: new { controller = "PackagePublish", action = "Upload" },
                 constraints: new { httpMethod = new HttpMethodRouteConstraint("PUT") });
 
-            endpoints.MapControllerRoute(
+            app.MapControllerRoute(
                 name: Routes.DeleteRouteName,
                 pattern: "api/v2/package/{id}/{version}",
                 defaults: new { controller = "PackagePublish", action = "Delete" },
                 constraints: new { httpMethod = new HttpMethodRouteConstraint("DELETE") });
 
-            endpoints.MapControllerRoute(
+            app.MapControllerRoute(
                 name: Routes.RelistRouteName,
                 pattern: "api/v2/package/{id}/{version}",
                 defaults: new { controller = "PackagePublish", action = "Relist" },
                 constraints: new { httpMethod = new HttpMethodRouteConstraint("POST") });
         }
 
-        public void MapSymbolRoutes(IEndpointRouteBuilder endpoints)
+        public static void MapSymbolRoutes(WebApplication app)
         {
-            endpoints.MapControllerRoute(
+            app.MapControllerRoute(
                 name: Routes.UploadSymbolRouteName,
                 pattern: "api/v2/symbol",
                 defaults: new { controller = "Symbol", action = "Upload" },
                 constraints: new { httpMethod = new HttpMethodRouteConstraint("PUT") });
 
-            endpoints.MapControllerRoute(
+            app.MapControllerRoute(
                 name: Routes.SymbolDownloadRouteName,
                 pattern: "api/download/symbols/{file}/{key}/{file2}",
                 defaults: new { controller = "Symbol", action = "Get" });
 
-            endpoints.MapControllerRoute(
+            app.MapControllerRoute(
                 name: Routes.PrefixedSymbolDownloadRouteName,
                 pattern: "api/download/symbols/{prefix}/{file}/{key}/{file2}",
                 defaults: new { controller = "Symbol", action = "Get" });
         }
 
-        public void MapSearchRoutes(IEndpointRouteBuilder endpoints)
+        public static void MapSearchRoutes(WebApplication app)
         {
-            endpoints.MapControllerRoute(
+            app.MapControllerRoute(
                 name: Routes.SearchRouteName,
                 pattern: "v3/search",
                 defaults: new { controller = "Search", action = "Search" });
 
-            endpoints.MapControllerRoute(
+            app.MapControllerRoute(
                 name: Routes.AutocompleteRouteName,
                 pattern: "v3/autocomplete",
                 defaults: new { controller = "Search", action = "Autocomplete" });
 
             // This is an unofficial API to find packages that depend on a given package.
-            endpoints.MapControllerRoute(
+            app.MapControllerRoute(
                 name: Routes.DependentsRouteName,
                 pattern: "v3/dependents",
                 defaults: new { controller = "Search", action = "Dependents" });
         }
 
-        public void MapPackageMetadataRoutes(IEndpointRouteBuilder endpoints)
+        public static void MapPackageMetadataRoutes(WebApplication app)
         {
-            endpoints.MapControllerRoute(
+            app.MapControllerRoute(
                name: Routes.RegistrationIndexRouteName,
                pattern: "v3/registration/{id}/index.json",
                defaults: new { controller = "PackageMetadata", action = "RegistrationIndex" });
 
-            endpoints.MapControllerRoute(
+            app.MapControllerRoute(
                 name: Routes.RegistrationLeafRouteName,
                 pattern: "v3/registration/{id}/{version}.json",
                 defaults: new { controller = "PackageMetadata", action = "RegistrationLeaf" });
         }
 
-        public void MapPackageContentRoutes(IEndpointRouteBuilder endpoints)
+        public static void MapPackageContentRoutes(WebApplication app)
         {
-            endpoints.MapControllerRoute(
+            app.MapControllerRoute(
                 name: Routes.PackageVersionsRouteName,
                 pattern: "v3/package/{id}/index.json",
                 defaults: new { controller = "PackageContent", action = "GetPackageVersions" });
 
-            endpoints.MapControllerRoute(
+            app.MapControllerRoute(
                 name: Routes.PackageDownloadRouteName,
                 pattern: "v3/package/{id}/{version}/{idVersion}.nupkg",
                 defaults: new { controller = "PackageContent", action = "DownloadPackage" });
 
-            endpoints.MapControllerRoute(
+            app.MapControllerRoute(
                 name: Routes.PackageDownloadManifestRouteName,
                 pattern: "v3/package/{id}/{version}/{id2}.nuspec",
                 defaults: new { controller = "PackageContent", action = "DownloadNuspec" });
 
-            endpoints.MapControllerRoute(
+            app.MapControllerRoute(
                 name: Routes.PackageDownloadReadmeRouteName,
                 pattern: "v3/package/{id}/{version}/readme",
                 defaults: new { controller = "PackageContent", action = "DownloadReadme" });
 
-            endpoints.MapControllerRoute(
+            app.MapControllerRoute(
                 name: Routes.PackageDownloadIconRouteName,
                 pattern: "v3/package/{id}/{version}/icon",
                 defaults: new { controller = "PackageContent", action = "DownloadIcon" });
